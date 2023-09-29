@@ -9,16 +9,17 @@ class OmnicalcController < ApplicationController
   end
   
   def giraffe
-    @principal = params.fetch("user_pv").to_f#.to_fs(:currency)
-    @apr = params.fetch("user_apr").to_f.round(4)#.to_fs(:percentage) #((params.fetch("users_apr").to_f) /12)/ 100
-    @years =  params.fetch("user_years").to_i #params.fetch("users_year").to_f * 12
+    @principal = params.fetch("user_pv").to_f
+    @apr = params.fetch("user_apr").to_f
+    @years =  params.fetch("user_years").to_i
 
-    r = (@apr / 12.0) / 100
-    y = @years * 12
-    top = r * @principal
-    bottom = 1 - (1 + r) ** (-1 * y)
+    @r = (@apr / 100.0) / 12.0
+    @n = @years *12.0
+        
 
-    @payment = top / bottom
+    @numerator = (@r * @principal)
+    @denom = 1.0 - ((1.0 + @r)**-@n)
+    @results = @numerator / @denom
 
     render({:template => "omnicalc_templates/payment_calc_results"})
   end
